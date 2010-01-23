@@ -215,10 +215,10 @@ module Paperclip
     #   for backend-specific options.
     def has_attached_file name, options = {}
       include InstanceMethods
-
+      
       write_inheritable_attribute(:attachment_definitions, {}) if attachment_definitions.nil?
       attachment_definitions[name] = {:validations => []}.merge(options)
-
+      
       after_save :save_attached_files
       before_destroy :destroy_attached_files
 

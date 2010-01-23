@@ -280,7 +280,7 @@ module Paperclip
 
     def post_process #:nodoc:
       return if @queued_for_write[:original].nil?
-      return if fire_events(:before)
+      # return if fire_events(:before)
       post_process_styles
       return if fire_events(:after)
     end
