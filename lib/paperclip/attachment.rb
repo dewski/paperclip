@@ -280,8 +280,7 @@ module Paperclip
 
     def post_process #:nodoc:
       return if @queued_for_write[:original].nil?
-      # This line stops the converting of thumbnails, patched until fixed
-      # return if fire_events(:before)
+      return if fire_events(:before)
       post_process_styles
       return if fire_events(:after)
     end
@@ -292,7 +291,7 @@ module Paperclip
     end
 
     def callback which #:nodoc:
-      instance.run_callbacks(which, @queued_for_write){|result, obj| result == false }
+      instance.run_callbacks(which, @queued_for_write)
     end
 
     def post_process_styles #:nodoc:
