@@ -222,7 +222,8 @@ module Paperclip
       after_save :save_attached_files
       before_destroy :destroy_attached_files
 
-      define_callbacks :post_process, :"#{name}_post_process"
+      define_callbacks :post_process, :scope => :name
+      define_callbacks :"#{name}_post_process", :scope => :name
       # define_callbacks , :"after_#{name}_post_process"
      
       # define_callbacks :before_post_process, :terminator => "result == false", :scope => [:kind, :name]
