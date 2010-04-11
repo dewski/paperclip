@@ -64,7 +64,9 @@ module Paperclip
     def processors
       @processors.respond_to?(:call) ? @processors.call(instance) : @processors
     end
-
+    
+    
+    
     # What gets called when you call instance.attachment = File. It clears
     # errors, assigns attributes, and processes the file. It
     # also queues up the previous file for deletion, to be flushed away on
@@ -91,7 +93,7 @@ module Paperclip
       instance_write(:content_type,    uploaded_file.content_type.to_s.strip)
       instance_write(:file_size,       uploaded_file.size.to_i)
       instance_write(:updated_at,      Time.now)
-
+    
       @dirty = true
 
       post_process
@@ -280,18 +282,12 @@ module Paperclip
 
     def post_process #:nodoc:
       return if @queued_for_write[:original].nil?
-      return if fire_events(:before)
-      post_process_styles
-      return if fire_events(:after)
-    end
-
-    def fire_events(which) #:nodoc:
-      return true if callback(:"#{which}_post_process") == false
-      return true if callback(:"#{which}_#{name}_post_process") == false
-    end
-
-    def callback which #:nodoc:
-      instance.run_callbacks(which, @queued_for_write)
+      
+      instance.run_callbacks :post_process do
+        instance.run_callbacks :"#{name}_post_process" do
+          post_process_styles
+        end
+      end
     end
 
     def post_process_styles #:nodoc:

@@ -32,12 +32,13 @@ require 'paperclip/iostream'
 require 'paperclip/geometry'
 require 'paperclip/processor'
 require 'paperclip/thumbnail'
+require 'paperclip/video_thumbnail'
 require 'paperclip/storage'
 require 'paperclip/interpolations'
 require 'paperclip/style'
 require 'paperclip/attachment'
 if defined?(Rails.root) && Rails.root
-  Dir.glob(File.join(File.expand_path(Rails.root), "lib", "paperclip_processors", "*.rb")).each do |processor|
+  Dir.glob(File.join(File.expand_path(Rails.root), 'lib', 'paperclip_processors', '*.rb')).each do |processor|
     require processor
   end
 end
@@ -215,19 +216,15 @@ module Paperclip
     #   for backend-specific options.
     def has_attached_file name, options = {}
       include InstanceMethods
-      
+
       write_inheritable_attribute(:attachment_definitions, {}) if attachment_definitions.nil?
       attachment_definitions[name] = {:validations => []}.merge(options)
-      
+
       after_save :save_attached_files
       before_destroy :destroy_attached_files
 
-      define_callbacks :post_process, :scope => :name
-      define_callbacks :"#{name}_post_process", :scope => :name
-      # define_callbacks , :"after_#{name}_post_process"
-     
-      # define_callbacks :before_post_process, :terminator => "result == false", :scope => [:kind, :name]
-      # define_callbacks :after_post_process, :terminator => "result == false", :scope => [:kind, :name]
+      define_callbacks :post_process, :terminator => 'result == false'
+      define_callbacks :"#{name}_post_process", :terminator => 'result == false'
      
       define_method name do |*args|
         a = attachment_for(name)
